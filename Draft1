@@ -1,0 +1,42 @@
+import json
+import pprint
+import urllib
+import ssl
+from six.moves.urllib.parse import urlencode
+from six.moves.urllib.request import Request, urlopen
+login_data = urllib.parse.urlencode({
+                                        'username' : 'username',
+                                        'password' : 'password',
+                                        'url' : 'https://www.docketalarm.com/api/v1/'
+                                        })
+url = "https://www.docketalarm.com/api/v1/"
+req = urllib.request.Request(url, login_data.encode('utf-8'))
+json_response = json.loads(urlopen(req).read())
+login_token = json_response['login_token']
+result = search_response['search_results'][0]
+print("\nGetting Result for JSON:\n" + pprint.pformat(result))
+get_args_encoded = urllib.urlencode(get_args)
+req = Request(base_api + "getdocket/" + "?" + urlencode({
+     'q' : '("Kevin Kozlowski") is:docket',
+     'offset' : 0,
+     'limit' : 5,
+     'login_token' : login_token,
+}))
+search_response = json.loads(urlopen(req).read())
+pprint.pprint(search_response)
+result = search_response['search_results'][5]
+print("\nGetting Result for JSON:\n" + pprint.pformat(result))
+req = Request(base_api + "getdocket/" + "?" + urlencode({
+    'court' : result['court'],
+    'docket' : result['docket'],
+    'title' : result['title'],
+    'link' : result['link'],
+    'date filed' : result['date filed'],
+    'cached' : True,
+    'login_token' : login_token,
+    'client_matter' : 'first-api-getdocket-test'
+}))
+fp = urllib.urlopen(full_url)
+contents = fp.read()
+json_contents = json.loads(contents)
+print(json_contents)
